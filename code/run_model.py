@@ -83,7 +83,6 @@ def data_for_stan(cases, settings):
     """
 
     q = -1 + settings.population_size / cases[0]
-    print(q)
 
     return {
         "n": len(cases),
