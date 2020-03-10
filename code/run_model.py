@@ -60,6 +60,7 @@ def load_data(data_path):
         Number of people infected (confirmed).
     """
     df = pd.read_csv(data_path)
+    df = df[df['Country/Region'] != 'Mainland China']
     column_names = list(df)
     i_first_day = column_names.index('1/22/20')  # First date column
 
@@ -177,12 +178,12 @@ def model_function(x, k, q, b):
         Number of infected people
     """
 
-    return k / (1 + q * np.exp(-b * x))
+    return float(k) / (1 + q * np.exp(-(b * x)))
 
 
 def plot_data_and_model(fit, dates, cases, settings):
     sns.set(style="ticks")
-    post = fit.get_drawset(params=['b', 'sigma'])
+    posterior = fit.get_drawset(params=['b', 'sigma'])
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
 
@@ -193,6 +194,22 @@ def plot_data_and_model(fit, dates, cases, settings):
                marker=settings.marker,
                color=settings.marker_color,
                edgecolor=settings.marker_edgecolor)
+
+
+    # Plot posterior mean
+    # ---------
+
+    # Model parameters
+    b = posterior["b"].mean()  # Growth rate
+    k = settings.data["k"]  # Population size
+    q = settings.data["q"]  # Parameter related to initial number of infected
+    n = settings.data['n']  # Number of data points
+    print(f'k={k} q={q} n={n}')
+
+    x = np.array(range(0, n))
+    y = model_function(x=x, k=k, q=q, b=b)
+
+    ax.plot(dates, y)
 
     # Format plot
     # ----------
