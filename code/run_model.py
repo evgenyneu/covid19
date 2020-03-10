@@ -1,34 +1,45 @@
+import numpy as np
 import pandas as pd
+import seaborn as sns
+from pandas.plotting import register_matplotlib_converters
 from datetime import datetime
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from cmdstanpy import CmdStanModel
 from dataclasses import dataclass
 from tarpan.cmdstanpy.analyse import save_analysis
 from tarpan.cmdstanpy.cache import run
 from tarpan.shared.info_path import InfoPath
-from tarpan.shared.summary import save_summary
 
 
 # Parameters for data analysys
 @dataclass
 class AnalysisSettings:
-    # Name of the parent directory where the plots will be created.
-    dir_name: str = "model_info"
-
     # Data for Stan model (dictionary)
     data = None
 
+    csv_path: str = "data/time_series_19-covid-Confirmed.csv"
+
     # Path to the .stan model file
-    stan_model_path: str = None
+    stan_model_path: str = "code/stan_model/logistic.stan"
 
     # Stan's sampling parameter
     max_treedepth: float = 10
 
     # Location of plots and summaries
-    info_path: InfoPath = None
+    info_path: InfoPath = InfoPath()
 
     population_size: float = 7800000
 
-    q: float = None
+    marker_color: str = "#0060ff44"
+
+    marker_edgecolor: str = "#0060ff"
+
+    marker: str = "o"
+
+    grid_color: str = "#aaaaaa"
+
+    grid_alpha: float = 0.2
 
 
 def load_data(data_path):
@@ -142,24 +153,87 @@ def check_all_days_present(dates):
         delta = date - prev_day
 
         if delta.days != 1:
-            raise ValueError(f'ERROR: missing days between {prev_day} and {date}')
+            raise ValueError(
+                f'ERROR: missing days between {prev_day} and {date}')
 
         prev_day = date
 
 
-def run_model(settings):
-    dates, cases = load_data("data/time_series_19-covid-Confirmed.csv")
+def model_function(x, k, q, b):
+    """
+    Calculates number of infected people using logistic function.
+
+    Parameters
+    ---------
+    x: numpy.ndarray
+        Day numbers
+
+    k, q, b: float
+        Parameters of logitic function.
+
+    Returns
+    -------
+    numpy.ndarray:
+        Number of infected people
+    """
+
+    return k / (1 + q * np.exp(-b * x))
+
+
+def plot_data_and_model(fit, dates, cases, settings):
+    sns.set(style="ticks")
+    post = fit.get_drawset(params=['b', 'sigma'])
+
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+
+    # Plot data
+    # ----------
+
+    ax.scatter(dates, cases,
+               marker=settings.marker,
+               color=settings.marker_color,
+               edgecolor=settings.marker_edgecolor)
+
+    # Format plot
+    # ----------
+
+    fig.autofmt_xdate()
+    date_format = mdates.DateFormatter('%b %d')
+    ax.xaxis.set_major_formatter(date_format)
+
+    title = (
+        "Number of people infected with COVID-19 worldwide\n"
+        "Data from Johns Hopkins University, Mar 10, 2010"
+    )
+
+    ax.set_title(title)
+    ax.set_ylabel("Infected people (confirmed cases)")
+
+    ax.grid(color=settings.grid_color, linewidth=1,
+            alpha=settings.grid_alpha)
+
+    fig.tight_layout()
+
+    # Save plot to file
+    # ---------
+
+    info_path = InfoPath(**settings.info_path.__dict__)
+    info_path.base_name = "covid19_infected_data_and_model"
+    info_path.extension = "png"
+    fig.savefig(str(info_path), dpi=info_path.dpi)
+
+
+def do_work():
+    register_matplotlib_converters()
+    settings = AnalysisSettings()
+    dates, cases = load_data(settings.csv_path)
     check_all_days_present(dates)
     settings.data = data_for_stan(cases, settings=settings)
-
-    # plt.scatter(dates, cases)
-    # plt.savefig("confirmed.png", dpi=300)
     fit = run(func=run_stan, settings=settings)
+    plot_data_and_model(fit=fit, dates=dates, cases=cases, settings=settings)
 
 
 if __name__ == '__main__':
     print("Running the model...")
-    model_path = "code/stan_model/logistic.stan"
-    settings = AnalysisSettings(stan_model_path=model_path)
-    run_model(settings=settings)
+    do_work()
     print('We are done')
