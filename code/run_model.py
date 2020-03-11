@@ -5,9 +5,11 @@ from pathlib import Path
 import requests
 import numpy as np
 import pandas as pd
+from scipy import stats
 import seaborn as sns
 from pandas.plotting import register_matplotlib_converters
 from datetime import datetime
+from dateutil import rrule
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from cmdstanpy import CmdStanModel
@@ -15,7 +17,7 @@ from dataclasses import dataclass
 from tarpan.cmdstanpy.analyse import save_analysis
 from tarpan.cmdstanpy.cache import run
 from tarpan.shared.info_path import InfoPath
-from tarpan.shared import stats
+import tarpan
 
 
 # Parameters for data analysys
@@ -47,7 +49,8 @@ time_series_19-covid-Confirmed.csv"
     marker_edgecolor: str = "#0060ff"
 
     mu_line_color: str = "#444444"
-    mu_hpdi_color: str = "#44444444"
+    mu_hpdi_color: str = "#44444477"
+    cases_hpdi_color: str = "#ff770066"
 
     marker: str = "o"
 
@@ -254,11 +257,16 @@ def model_function(x, k, q, b):
     return float(k) / (1 + q * np.exp(-(b * x)))
 
 
+def simulated(mu, sigma):
+    return stats.norm.rvs(size=len(sigma), loc=mu, scale=sigma)
+
+
 def plot_data_and_model(fit, dates, cases, settings):
     sns.set(style="ticks")
     posterior = fit.get_drawset(params=['b', 'sigma'])
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
+    ax.ticklabel_format(style='sci')
 
     # Plot data
     # ----------
@@ -273,11 +281,13 @@ def plot_data_and_model(fit, dates, cases, settings):
 
     # Model parameters
     b = posterior["b"].to_numpy()  # Growth rate
+    sigma = posterior["sigma"].to_numpy()  # Spear of observations
     k = settings.data["k"]  # Population size
     q = settings.data["q"]  # Parameter related to initial number of infected
     n = settings.data['n']  # Number of data points
 
-    x_values = np.array(range(0, n))
+    days_plotted = n * 3
+    x_values = np.array(range(0, days_plotted))
 
     mu = [
         model_function(x=x, k=k, q=q, b=b)
@@ -288,15 +298,37 @@ def plot_data_and_model(fit, dates, cases, settings):
 
     # Plot mean
     mu_mean = mu.mean(axis=1)
-    ax.plot(dates, mu_mean, color=settings.mu_line_color)
+
+    x_dates = list(rrule.rrule(freq=rrule.DAILY,
+                               count=days_plotted, dtstart=dates[0]))
+
+    ax.plot(x_dates, mu_mean, color=settings.mu_line_color)
 
     # Plot HPDI interval
     # --------
 
-    hpdi = np.apply_along_axis(stats.hpdi, 1, mu, probability=0.95)
+    hpdi = np.apply_along_axis(tarpan.shared.stats.hpdi, 1, mu,
+                               probability=0.95)
 
-    ax.fill_between(dates, hpdi[:, 0], hpdi[:, 1],
+    ax.fill_between(x_dates, hpdi[:, 0], hpdi[:, 1],
                     facecolor=settings.mu_hpdi_color)
+
+    # Plot simulated observations
+
+    simulated_cases = [
+        simulated(mu=mu[i, :], sigma=sigma)
+        for i in range(len(x_values))
+    ]
+
+    simulated_cases = np.array(simulated_cases)
+
+    cases_hpdi = np.apply_along_axis(
+        tarpan.shared.stats.hpdi, 1, simulated_cases, probability=0.95)
+
+    ax.fill_between(x_dates,
+                    cases_hpdi[:, 0], cases_hpdi[:, 1],
+                    facecolor=settings.cases_hpdi_color,
+                    linewidth=0)
 
     # Format plot
     # ----------
@@ -316,6 +348,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     ax.grid(color=settings.grid_color, linewidth=1,
             alpha=settings.grid_alpha)
 
+    ax.set_ylim([0, k])
     fig.tight_layout()
 
     # Save plot to file
@@ -325,6 +358,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     info_path.base_name = "covid19_infected_data_and_model"
     info_path.extension = "png"
     fig.savefig(str(info_path), dpi=info_path.dpi)
+    plt.show(fig)
 
 
 def do_work():

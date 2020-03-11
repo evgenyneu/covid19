@@ -9,12 +9,12 @@ data {
 
 parameters {
   real<lower=0> b;      // Growth rate
-  real<lower=1> sigma;  //
+  real<lower=0> sigma;  // Spread of the cases
 }
 
 model {
   vector[n] mu;
-  sigma ~ exponential(1);
+  sigma ~ exponential(0.1);
   b ~ exponential(1);
 
   for (day in 1:n) {
