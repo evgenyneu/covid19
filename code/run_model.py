@@ -61,7 +61,7 @@ def download_data(settings):
     time_now = datetime.now()
     mod_time = datetime.fromtimestamp(os.path.getmtime(data_path))
     delta = time_now - mod_time
-    delta_hours = delta.seconds / 60 / 60
+    delta_hours = delta.total_seconds() / 60 / 60
     max_hours_diff = 12
 
     if delta_hours < max_hours_diff:
@@ -252,7 +252,6 @@ def plot_data_and_model(fit, dates, cases, settings):
                marker=settings.marker,
                color=settings.marker_color,
                edgecolor=settings.marker_edgecolor)
-
 
     # Plot posterior mean
     # ---------
