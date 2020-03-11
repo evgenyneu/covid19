@@ -96,12 +96,12 @@ def download_data(settings):
 
     path = Path(data_path)
     data_dir = path.parent
-    archive_dir = os.path.join(data_dir, "archive")
+    archive_dir = os.path.join(data_dir, "archive", "confirmed")
 
     if not os.path.exists(archive_dir):
         os.makedirs(archive_dir, exist_ok=True)
 
-    archive_file_name = time_now.strftime('confirmed-%Y-%m-%d.csv')
+    archive_file_name = time_now.strftime('%Y-%m-%d.csv')
     archive_path = os.path.join(archive_dir, archive_file_name)
 
     copyfile(data_path, archive_path)
