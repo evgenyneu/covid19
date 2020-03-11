@@ -8,7 +8,7 @@ import pandas as pd
 from scipy import stats
 import seaborn as sns
 from pandas.plotting import register_matplotlib_converters
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import rrule
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -302,6 +302,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     x_dates = list(rrule.rrule(freq=rrule.DAILY,
                                count=days_plotted, dtstart=dates[0]))
 
+    x_dates = np.array(x_dates)
     ax.plot(x_dates, mu_mean, color=settings.mu_line_color)
 
     # Plot HPDI interval
@@ -348,17 +349,26 @@ def plot_data_and_model(fit, dates, cases, settings):
     ax.grid(color=settings.grid_color, linewidth=1,
             alpha=settings.grid_alpha)
 
-    ax.set_ylim([0, k])
     fig.tight_layout()
 
-    # Save plot to file
+    # Plot entire population
     # ---------
-
     info_path = InfoPath(**settings.info_path.__dict__)
-    info_path.base_name = "covid19_infected_data_and_model"
+    info_path.base_name = "covid19_infected_population"
     info_path.extension = "png"
     fig.savefig(str(info_path), dpi=info_path.dpi)
-    plt.show(fig)
+
+    # Plot at scale of observations
+    # ---------
+
+    last_data = simulated_cases.mean(axis=1)[n - 1]
+    margins = last_data * 0.1
+    day_margin = timedelta(days=1)
+    ax.set_xlim([dates[0] - day_margin, dates[-1] + day_margin])
+    ax.set_ylim([0 - margins, last_data + margins])
+    info_path.base_name = "covid19_infected"
+    info_path.extension = "png"
+    fig.savefig(str(info_path), dpi=info_path.dpi)
 
 
 def do_work():

@@ -14,7 +14,7 @@ parameters {
 
 model {
   vector[n] mu;
-  sigma ~ exponential(0.1);
+  sigma ~ exponential(0.01);
   b ~ exponential(1);
 
   for (day in 1:n) {
