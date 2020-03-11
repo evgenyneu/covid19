@@ -49,6 +49,11 @@ time_series_19-covid-Confirmed.csv"
 
     population_size: float = 7800000
 
+    # Difference between the maximum number of confirmed cases
+    # and the actual number of confirmed cases at which we consider
+    # all people to be reported
+    tolerance_cases = 1000
+
     marker_color: str = "#0060ff44"
 
     marker_edgecolor: str = "#0060ff"
@@ -268,7 +273,7 @@ def simulated(mu, sigma):
     return stats.norm.rvs(size=len(sigma), loc=mu, scale=sigma)
 
 
-def calculate_all_infected_day(k, q, b):
+def calculate_all_infected_day(k, q, b, settings):
     """
     Calculates the day when almost all almost people that can be reported
     are reported.
@@ -292,7 +297,8 @@ def calculate_all_infected_day(k, q, b):
     while True:
         sim_confirmed = model_function(x=day_all_infected, k=k, q=q, b=b_mean)
 
-        if abs(sim_confirmed - k) < 1000:
+        # Stop if number of confirmed cases is almost at maximum level
+        if abs(sim_confirmed - k) < settings.tolerance_cases:
             break
 
         day_all_infected += 1
@@ -325,7 +331,9 @@ def plot_data_and_model(fit, dates, cases, settings):
     q = settings.data["q"]  # Parameter related to initial number of infected
     n = settings.data['n']  # Number of data points
 
-    day_all_infected = calculate_all_infected_day(k=k, q=q, b=b)
+    day_all_infected = calculate_all_infected_day(k=k, q=q, b=b,
+                                                  settings=settings)
+
     x_values = np.array(range(0, day_all_infected))
 
     mu = [
