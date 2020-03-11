@@ -28,7 +28,7 @@ class AnalysisSettings:
     # URL to the data
     data_url: str = "https://raw.githubusercontent.com/CSSEGISandData/\
 COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/\
-time_series_19-covid-Confirmed_hello.csv"
+time_series_19-covid-Confirmed.csv"
 
     # Path to the .stan model file
     stan_model_path: str = "code/stan_model/logistic.stan"
@@ -66,13 +66,13 @@ def download_data(settings):
     delta_hours = delta.total_seconds() / 60 / 60
     max_hours_diff = 12
 
-    if delta_hours > max_hours_diff:
+    if delta_hours < max_hours_diff:
         # Data is up to date
         return
 
     shutil.rmtree(settings.info_path.dir())  # Remove data directory
     print(f"Data last downloaded {round(delta_hours)} hours ago.")
-    print(f"Re-downloading data from {data_url}...")
+    print(f"Re-downloading data from:\n{data_url}")
 
     # Download
     response = requests.get(data_url)
