@@ -1,7 +1,7 @@
 data {
   int n;           // Number of data point
   real cases[n];   // Number of infected people at successive days
-  real k;          // Population size
+  real k;          // Maximum number cases that can be confirmed
 
   // Logistic function parameter related to initial number of infected people
   real q;

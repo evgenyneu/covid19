@@ -15,8 +15,8 @@ import matplotlib.dates as mdates
 from cmdstanpy import CmdStanModel
 from dataclasses import dataclass
 from tarpan.cmdstanpy.analyse import save_analysis
-from tarpan.cmdstanpy.cache import run
 from tarpan.shared.info_path import InfoPath
+from tarpan.cmdstanpy.cache import run
 import tarpan
 
 
@@ -41,6 +41,11 @@ time_series_19-covid-Confirmed.csv"
 
     # Location of plots and summaries
     info_path: InfoPath = InfoPath()
+
+    # Fraction of people who have cofonavarus and who have been reported
+    # as confirmed case. For example,
+    # 1 means all, 0.5 means 50% of sick people get reported)
+    fraction_cofirmed = 1
 
     population_size: float = 7800000
 
@@ -170,12 +175,14 @@ def data_for_stan(cases, settings):
         Data that is supplied to Stan model.
     """
 
-    q = -1 + settings.population_size / cases[0]
+    total_confirmed = settings.population_size * settings.fraction_cofirmed
+
+    q = -1 + total_confirmed / cases[0]
 
     return {
         "n": len(cases),
         "cases": cases,
-        "k": settings.population_size,
+        "k": total_confirmed,
         "q": q
     }
 
@@ -261,6 +268,38 @@ def simulated(mu, sigma):
     return stats.norm.rvs(size=len(sigma), loc=mu, scale=sigma)
 
 
+def calculate_all_infected_day(k, q, b):
+    """
+    Calculates the day when almost all almost people that can be reported
+    are reported.
+
+    Parameters
+    ----------
+
+    k, q, b: float
+        Parameters of logitic function.
+
+    Returns
+    -------
+
+    The day number when almost all people that can be reported as infected
+    are reported.
+    """
+
+    day_all_infected = 0
+    b_mean = b.mean()
+
+    while True:
+        sim_confirmed = model_function(x=day_all_infected, k=k, q=q, b=b_mean)
+
+        if abs(sim_confirmed - k) < 1000:
+            break
+
+        day_all_infected += 1
+
+    return day_all_infected
+
+
 def plot_data_and_model(fit, dates, cases, settings):
     sns.set(style="ticks")
     posterior = fit.get_drawset(params=['b', 'sigma'])
@@ -282,12 +321,12 @@ def plot_data_and_model(fit, dates, cases, settings):
     # Model parameters
     b = posterior["b"].to_numpy()  # Growth rate
     sigma = posterior["sigma"].to_numpy()  # Spear of observations
-    k = settings.data["k"]  # Population size
+    k = settings.data["k"]  # Maximum number cases that can be confirmed
     q = settings.data["q"]  # Parameter related to initial number of infected
     n = settings.data['n']  # Number of data points
 
-    days_plotted = n * 3
-    x_values = np.array(range(0, days_plotted))
+    day_all_infected = calculate_all_infected_day(k=k, q=q, b=b)
+    x_values = np.array(range(0, day_all_infected))
 
     mu = [
         model_function(x=x, k=k, q=q, b=b)
@@ -300,7 +339,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     mu_mean = mu.mean(axis=1)
 
     x_dates = list(rrule.rrule(freq=rrule.DAILY,
-                               count=days_plotted, dtstart=dates[0]))
+                               count=day_all_infected, dtstart=dates[0]))
 
     x_dates = np.array(x_dates)
     ax.plot(x_dates, mu_mean, color=settings.mu_line_color)
@@ -377,6 +416,8 @@ def do_work():
     dates, cases = load_data(settings=settings)
     check_all_days_present(dates)
     settings.data = data_for_stan(cases, settings=settings)
+    # output_dir = os.path.join(settings.info_path.dir(), "stan_cache")
+    # fit = run_stan(output_dir=output_dir, settings=settings)
     fit = run(func=run_stan, settings=settings)
     plot_data_and_model(fit=fit, dates=dates, cases=cases, settings=settings)
 
