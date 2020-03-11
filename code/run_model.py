@@ -24,9 +24,11 @@ class AnalysisSettings:
     data = None
 
     csv_path: str = "data/time_series_19-covid-Confirmed.csv"
+
+    # URL to the data
     data_url: str = "https://raw.githubusercontent.com/CSSEGISandData/\
 COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/\
-time_series_19-covid-Confirmed.csv"
+time_series_19-covid-Confirmed_hello.csv"
 
     # Path to the .stan model file
     stan_model_path: str = "code/stan_model/logistic.stan"
@@ -64,7 +66,7 @@ def download_data(settings):
     delta_hours = delta.total_seconds() / 60 / 60
     max_hours_diff = 12
 
-    if delta_hours < max_hours_diff:
+    if delta_hours > max_hours_diff:
         # Data is up to date
         return
 
@@ -74,6 +76,15 @@ def download_data(settings):
 
     # Download
     response = requests.get(data_url)
+
+    try:
+        # Check if download was successful
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        print(f"Error downloading data from {data_url}.")
+        print(f"Using previous data")
+        return
+
     data = response.text
 
     # Save to file
