@@ -46,8 +46,8 @@ time_series_19-covid-Confirmed.csv"
 
     marker_edgecolor: str = "#0060ff"
 
-    mu_line_color: str = "#e300c6"
-    mu_hpdi_color: str = "#e300c666"
+    mu_line_color: str = "#444444"
+    mu_hpdi_color: str = "#44444444"
 
     marker: str = "o"
 
@@ -291,7 +291,10 @@ def plot_data_and_model(fit, dates, cases, settings):
     ax.plot(dates, mu_mean, color=settings.mu_line_color)
 
     # Plot HPDI interval
+    # --------
+
     hpdi = np.apply_along_axis(stats.hpdi, 1, mu, probability=0.95)
+
     ax.fill_between(dates, hpdi[:, 0], hpdi[:, 1],
                     facecolor=settings.mu_hpdi_color)
 
