@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from tarpan.cmdstanpy.analyse import save_analysis
 from tarpan.cmdstanpy.cache import run
 from tarpan.shared.info_path import InfoPath
+from tarpan.shared import stats
 
 
 # Parameters for data analysys
@@ -44,6 +45,9 @@ time_series_19-covid-Confirmed.csv"
     marker_color: str = "#0060ff44"
 
     marker_edgecolor: str = "#0060ff"
+
+    mu_line_color: str = "#e300c6"
+    mu_hpdi_color: str = "#e300c666"
 
     marker: str = "o"
 
@@ -264,19 +268,32 @@ def plot_data_and_model(fit, dates, cases, settings):
                color=settings.marker_color,
                edgecolor=settings.marker_edgecolor)
 
-    # Plot posterior mean
+    # Plot posterior
     # ---------
 
     # Model parameters
-    b = posterior["b"].mean()  # Growth rate
+    b = posterior["b"].to_numpy()  # Growth rate
     k = settings.data["k"]  # Population size
     q = settings.data["q"]  # Parameter related to initial number of infected
     n = settings.data['n']  # Number of data points
 
-    x = np.array(range(0, n))
-    y = model_function(x=x, k=k, q=q, b=b)
+    x_values = np.array(range(0, n))
 
-    ax.plot(dates, y)
+    mu = [
+        model_function(x=x, k=k, q=q, b=b)
+        for x in x_values
+    ]
+
+    mu = np.array(mu)
+
+    # Plot mean
+    mu_mean = mu.mean(axis=1)
+    ax.plot(dates, mu_mean, color=settings.mu_line_color)
+
+    # Plot HPDI interval
+    hpdi = np.apply_along_axis(stats.hpdi, 1, mu, probability=0.95)
+    ax.fill_between(dates, hpdi[:, 0], hpdi[:, 1],
+                    facecolor=settings.mu_hpdi_color)
 
     # Format plot
     # ----------
