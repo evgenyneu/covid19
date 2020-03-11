@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -19,6 +20,9 @@ class AnalysisSettings:
     data = None
 
     csv_path: str = "data/time_series_19-covid-Confirmed.csv"
+    data_url: str = "https://raw.githubusercontent.com/CSSEGISandData/\
+COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/\
+time_series_19-covid-Confirmed.csv"
 
     # Path to the .stan model file
     stan_model_path: str = "code/stan_model/logistic.stan"
@@ -42,7 +46,24 @@ class AnalysisSettings:
     grid_alpha: float = 0.2
 
 
-def load_data(data_path):
+def download_data(data_path, data_url):
+    """
+    Downloads the CSV file containing data about convermed COVID-19 cases
+    """
+
+    time_now = datetime.now()
+    mod_time = datetime.fromtimestamp(os.path.getmtime(data_path))
+    delta = time_now - mod_time
+    delta_hours = delta.seconds / 60 / 60
+    max_hours_diff = 12
+
+    if delta_hours > max_hours_diff:
+        print(f"Data last downloaded {round(delta_hours)} hours ago.")
+        print(f"Re-downloading data from {data_url}...")
+
+
+
+def load_data(data_path, data_url):
     """
     Load data.
 
@@ -59,6 +80,9 @@ def load_data(data_path):
     list of float:
         Number of people infected (confirmed).
     """
+
+    download_data(data_path, data_url)
+
     df = pd.read_csv(data_path)
     df = df[df['Country/Region'] != 'Mainland China']
     column_names = list(df)
@@ -204,7 +228,6 @@ def plot_data_and_model(fit, dates, cases, settings):
     k = settings.data["k"]  # Population size
     q = settings.data["q"]  # Parameter related to initial number of infected
     n = settings.data['n']  # Number of data points
-    print(f'k={k} q={q} n={n}')
 
     x = np.array(range(0, n))
     y = model_function(x=x, k=k, q=q, b=b)
@@ -243,7 +266,10 @@ def plot_data_and_model(fit, dates, cases, settings):
 def do_work():
     register_matplotlib_converters()
     settings = AnalysisSettings()
-    dates, cases = load_data(settings.csv_path)
+
+    dates, cases = load_data(data_path=settings.csv_path,
+                             data_url=settings.data_url)
+
     check_all_days_present(dates)
     settings.data = data_for_stan(cases, settings=settings)
     fit = run(func=run_stan, settings=settings)
