@@ -1,4 +1,8 @@
 import os
+import shutil
+from shutil import copyfile
+from pathlib import Path
+import requests
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -46,10 +50,13 @@ time_series_19-covid-Confirmed.csv"
     grid_alpha: float = 0.2
 
 
-def download_data(data_path, data_url):
+def download_data(settings):
     """
     Downloads the CSV file containing data about convermed COVID-19 cases
     """
+
+    data_path = settings.csv_path
+    data_url = settings.data_url
 
     time_now = datetime.now()
     mod_time = datetime.fromtimestamp(os.path.getmtime(data_path))
@@ -57,13 +64,39 @@ def download_data(data_path, data_url):
     delta_hours = delta.seconds / 60 / 60
     max_hours_diff = 12
 
-    if delta_hours > max_hours_diff:
-        print(f"Data last downloaded {round(delta_hours)} hours ago.")
-        print(f"Re-downloading data from {data_url}...")
+    if delta_hours < max_hours_diff:
+        # Data is up to date
+        return
+
+    shutil.rmtree(settings.info_path.dir())  # Remove data directory
+    print(f"Data last downloaded {round(delta_hours)} hours ago.")
+    print(f"Re-downloading data from {data_url}...")
+
+    # Download
+    response = requests.get(data_url)
+    data = response.text
+
+    # Save to file
+    with open(data_path, "w") as text_file:
+        text_file.write(data)
+
+    # Save with time stamp in archive folder
+    # ------
+
+    path = Path(data_path)
+    data_dir = path.parent
+    archive_dir = os.path.join(data_dir, "archive")
+
+    if not os.path.exists(archive_dir):
+        os.makedirs(archive_dir, exist_ok=True)
+
+    archive_file_name = time_now.strftime('confirmed-%Y-%m-%d.csv')
+    archive_path = os.path.join(archive_dir, archive_file_name)
+
+    copyfile(data_path, archive_path)
 
 
-
-def load_data(data_path, data_url):
+def load_data(settings):
     """
     Load data.
 
@@ -81,7 +114,8 @@ def load_data(data_path, data_url):
         Number of people infected (confirmed).
     """
 
-    download_data(data_path, data_url)
+    data_path = settings.csv_path
+    download_data(settings=settings)
 
     df = pd.read_csv(data_path)
     df = df[df['Country/Region'] != 'Mainland China']
@@ -266,10 +300,7 @@ def plot_data_and_model(fit, dates, cases, settings):
 def do_work():
     register_matplotlib_converters()
     settings = AnalysisSettings()
-
-    dates, cases = load_data(data_path=settings.csv_path,
-                             data_url=settings.data_url)
-
+    dates, cases = load_data(settings=settings)
     check_all_days_present(dates)
     settings.data = data_for_stan(cases, settings=settings)
     fit = run(func=run_stan, settings=settings)
