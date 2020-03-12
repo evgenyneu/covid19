@@ -5,9 +5,9 @@ This is a Stan model for analysing time series of confirmed cases of Coronavirus
 * Downloads new data on confirmed COVID-19 cases from Johns Hopkins University [Github's repository](
 https://github.com/CSSEGISandData/COVID-19).
 
-* Runs Stan with using logistic function in the model.
+* Runs Stan mode that uses logistic function.
 
-* Creates a plot showing observed data with round blue markers and the model with black line:
+* Creates a plot showing observed data with round blue markers and the model with black line. The orange shaded region indicates model's uncertainty and correspond to 95% DHPI (highest posterior density interval).
 
 ![Modelling COVID-19 confirmed cases with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_observed.png)
 
