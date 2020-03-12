@@ -1,3 +1,5 @@
+# Modelling spread of infectious desease using logisic growth model
+
 import os
 import shutil
 from shutil import copyfile
@@ -230,7 +232,7 @@ def run_stan(output_dir, settings: AnalysisSettings):
         output_dir=output_dir)
 
     # Make summaries and plots of parameter distributions
-    save_analysis(fit, param_names=["b", "sigma"])
+    save_analysis(fit, param_names=["r", "sigma"])
 
     return fit
 
@@ -317,7 +319,7 @@ def calculate_all_infected_day(k, q, b, settings):
 
 def plot_data_and_model(fit, dates, cases, settings):
     sns.set(style="ticks")
-    posterior = fit.get_drawset(params=['b', 'sigma'])
+    posterior = fit.get_drawset(params=['r', 'sigma'])
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
     ax.ticklabel_format(style='sci')
@@ -335,7 +337,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     # ---------
 
     # Model parameters
-    b = posterior["b"].to_numpy()  # Growth rate
+    b = posterior["r"].to_numpy()  # Growth rate
     sigma = posterior["sigma"].to_numpy()  # Spear of observations
     k = settings.data["k"]  # Maximum number cases that can be confirmed
     q = settings.data["q"]  # Parameter related to initial number of infected
