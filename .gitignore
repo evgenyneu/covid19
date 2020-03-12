@@ -16,3 +16,9 @@ stan_cache
 model.o
 model.hpp
 stan_output
+
+# Latex
+**/latex/**/*.log
+**/latex/**/*.out
+**/latex/**/*.aux
+**/latex/**/*.pdf

@@ -1,0 +1,38 @@
+\documentclass[a4paper,twoside, 11pt]{article}
+
+% Packages
+% ---------------------
+
+\usepackage{amsmath} % Needed for command eqref
+\usepackage{siunitx} % Physical numbers and units
+\usepackage{bm} % Bold math text \bm{x}
+\usepackage{tabu} % Tables with vertical cell padding adjustment
+\usepackage{hyperref} % URLs
+
+% Page settings
+% ---------------------
+
+\usepackage[top=2cm, bottom=2cm,left=2cm,right=2cm]{geometry} %  Page margins
+\setlength{\parskip}{\baselineskip} % Add space between paragraphs
+\setlength{\intextsep}{20pt plus 2.0pt minus 2.0pt} % Add vertical space before and after tables and figures (http://tex.stackexchange.com/a/26522/101976)
+\parindent=0cm % Remove the paragraph indent of the first line
+\addtolength{\jot}{2\jot} % Double the line between equations
+\def\arraystretch{1.5} % Increase the vertical table cell margin
+\raggedbottom % Prevents spreading the page content vetically for non-full pages.
+
+% Set vertical space around equations.
+\AtBeginDocument{%
+ \abovedisplayskip=15pt plus 5pt minus 5pt
+ \abovedisplayshortskip=12pt plus 3pt
+ \belowdisplayskip=15pt plus 5pt minus 5pt
+ \belowdisplayshortskip=12pt plus 3pt minus 4pt
+}
+
+\begin{document}
+
+\input{parts/model}
+
+
+
+
+\end{document}
