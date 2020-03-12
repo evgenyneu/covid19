@@ -32,7 +32,6 @@ The model does not include the data for China because the the number of confirme
 
 ![Modelling COVID-19 confirmed cases in China with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_observed_china.png)
 
-![Modelling COVID-19 confirmed cases in China with logistic function, extrapolated](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_extrapolated_china.png)
 
 ## Setup
 

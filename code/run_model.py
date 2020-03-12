@@ -475,10 +475,10 @@ def do_work():
     check_all_days_present(dates)
     settings.data = data_for_stan(cases, settings=settings)
     output_dir = os.path.join(settings.info_path.dir(), "stan_cache")
-    # shutil.rmtree(output_dir, ignore_errors=True)
-    # os.makedirs(output_dir, exist_ok=True)
-    # fit = run_stan(output_dir=output_dir, settings=settings)
-    fit = run(func=run_stan, settings=settings)
+    shutil.rmtree(output_dir, ignore_errors=True)
+    os.makedirs(output_dir, exist_ok=True)
+    fit = run_stan(output_dir=output_dir, settings=settings)
+    # fit = run(func=run_stan, settings=settings)
     plot_data_and_model(fit=fit, dates=dates, cases=cases, settings=settings)
 
 
