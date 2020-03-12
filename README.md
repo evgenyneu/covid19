@@ -22,6 +22,7 @@ As new data become available daily, I will be running this script and adding the
 
 ![Modelling COVID-19 confirmed cases with logistic function, extrapolated](https://github.com/evgenyneu/covid19/raw/master/plots/recent_extrapolated.png)
 
+
 ## Assumptions
 
 In the model we make the following assumptions:
@@ -83,6 +84,12 @@ The script will run the model and save plots into the [plots](plots) directory.
 
 The data is taken from Johns Hopkins University [Github's repository](
 https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv).
+
+
+## Learning Stan
+
+If you want to learn more about Stan and statistical programming, I would highly recommend
+[Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/) textbook by Richard McElreath.
 
 
 ## The unlicense
