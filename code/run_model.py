@@ -62,13 +62,15 @@ time_series_19-covid-Confirmed.csv"
     # all people to be reported
     tolerance_cases = 1000
 
-    marker_color: str = "#0060ff44"
+    marker_color: str = "#F4A92800"
+    marker_edgecolor: str = "#F4A928"
 
-    marker_edgecolor: str = "#0060ff"
+    mu_line_color: str = "#28ADF4"
+    mu_hpdi_color: str = "#6ef48688"
+    cases_hpdi_color: str = "#e8e8f455"
 
-    mu_line_color: str = "#444444"
-    mu_hpdi_color: str = "#44444477"
-    cases_hpdi_color: str = "#ff770044"
+    # Plot's background color
+    background_color = '#023D45'
 
     marker: str = "o"
 
@@ -319,19 +321,12 @@ def calculate_all_infected_day(k, q, b, settings):
 
 def plot_data_and_model(fit, dates, cases, settings):
     sns.set(style="ticks")
+    plt.style.use('dark_background')
     posterior = fit.get_drawset(params=['r', 'sigma'])
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
-    ax.ticklabel_format(style='sci')
-
-    # Plot data
-    # ----------
-
-    ax.scatter(dates, cases,
-               marker=settings.marker,
-               color=settings.marker_color,
-               edgecolor=settings.marker_edgecolor,
-               label="Reported")
+    ax.set_facecolor(settings.background_color)
+    fig.set_facecolor(settings.background_color)
 
     # Plot posterior
     # ---------
@@ -362,7 +357,8 @@ def plot_data_and_model(fit, dates, cases, settings):
                                count=day_all_infected, dtstart=dates[0]))
 
     x_dates = np.array(x_dates)
-    ax.plot(x_dates, mu_mean, color=settings.mu_line_color, label="Model")
+    ax.plot(x_dates, mu_mean, color=settings.mu_line_color, label="Model",
+            zorder=10)
 
     # Plot HPDI interval
     # --------
@@ -371,7 +367,8 @@ def plot_data_and_model(fit, dates, cases, settings):
                                probability=settings.hpdi_width)
 
     ax.fill_between(x_dates, hpdi[:, 0], hpdi[:, 1],
-                    facecolor=settings.mu_hpdi_color)
+                    facecolor=settings.mu_hpdi_color, zorder=7,
+                    linewidth=0)
 
     # Plot simulated observations
 
@@ -390,7 +387,17 @@ def plot_data_and_model(fit, dates, cases, settings):
                     cases_hpdi[:, 0], cases_hpdi[:, 1],
                     facecolor=settings.cases_hpdi_color,
                     linewidth=0,
-                    label=f"{round(settings.hpdi_width*100)}% HPDI")
+                    label=f"{round(settings.hpdi_width*100)}% HPDI", zorder=5)
+
+    # Plot data
+    # ----------
+
+    ax.scatter(dates, cases,
+               marker=settings.marker,
+               color=settings.marker_color,
+               edgecolor=settings.marker_edgecolor,
+               label="Reported",
+               zorder=9)
 
     # Format plot
     # ----------
@@ -416,7 +423,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     ax.get_yaxis().set_major_formatter(
         matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 
-    ax.legend()
+    ax.legend(facecolor=settings.background_color)
     fig.tight_layout()
 
     # Save images
@@ -433,13 +440,13 @@ def plot_data_and_model(fit, dates, cases, settings):
     filename_date = datetime.now().strftime('%Y_%m_%d')
     filename = f"{filename_date}_extrapolated.png"
     image_path = os.path.join(settings.plots_dir, filename)
-    fig.savefig(image_path, dpi=info_path.dpi)
+    fig.savefig(image_path, dpi=info_path.dpi, facecolor=fig.get_facecolor())
     print("Created plots:")
     print(image_path)
 
     filename = f"recent_extrapolated.png"
     image_path = os.path.join(settings.plots_dir, filename)
-    fig.savefig(image_path, dpi=info_path.dpi)
+    fig.savefig(image_path, dpi=info_path.dpi, facecolor=fig.get_facecolor())
 
     # Plot at scale of observations
     # ---------
@@ -451,12 +458,13 @@ def plot_data_and_model(fit, dates, cases, settings):
     ax.set_ylim([0 - margins, last_data + margins])
     filename = f"{filename_date}_observed.png"
     image_path = os.path.join(settings.plots_dir, filename)
-    fig.savefig(image_path, dpi=info_path.dpi)
+    fig.savefig(image_path, dpi=info_path.dpi, facecolor=fig.get_facecolor())
     print(image_path)
+
 
     filename = f"recent_observed.png"
     image_path = os.path.join(settings.plots_dir, filename)
-    fig.savefig(image_path, dpi=info_path.dpi)
+    fig.savefig(image_path, dpi=info_path.dpi, facecolor=fig.get_facecolor())
     # plt.show()
 
 
@@ -467,10 +475,10 @@ def do_work():
     check_all_days_present(dates)
     settings.data = data_for_stan(cases, settings=settings)
     output_dir = os.path.join(settings.info_path.dir(), "stan_cache")
-    shutil.rmtree(output_dir, ignore_errors=True)
-    os.makedirs(output_dir, exist_ok=True)
-    fit = run_stan(output_dir=output_dir, settings=settings)
-    # fit = run(func=run_stan, settings=settings)
+    # shutil.rmtree(output_dir, ignore_errors=True)
+    # os.makedirs(output_dir, exist_ok=True)
+    # fit = run_stan(output_dir=output_dir, settings=settings)
+    fit = run(func=run_stan, settings=settings)
     plot_data_and_model(fit=fit, dates=dates, cases=cases, settings=settings)
 
 
