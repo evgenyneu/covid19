@@ -1,4 +1,4 @@
-# Analysing time series of world wide confirmed cases of Coronavirus (COVID-19) with Stan and Python
+# Using logistic function to model number of COVID-19 confirmed cases in Stan and Python
 
 This is a Stan model for analysing time series of confirmed cases of Coronavirus (COVID-19). The program does the following:
 
@@ -17,7 +17,11 @@ As the new data becomes available daily, I will be running this script and addin
 
 ## Exclusion of China
 
-The model does not include the data for China.
+The model does not include the data for China because the the number of confirmed cases have levelled off, as shown below. This could indicate that the virus has invected most people. Alternatively, it could be the case that the data are not accurate, or health care system is overwhelmed and is not able to test people.
+
+![Modelling COVID-19 confirmed cases in China with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_observed_china.png)
+
+![Modelling COVID-19 confirmed cases in China with logistic function, extrapolated](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_extrapolated_china.png)
 
 ## Setup
 
