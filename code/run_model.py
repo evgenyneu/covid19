@@ -48,14 +48,14 @@ time_series_19-covid-Confirmed.csv"
     # Number of hours to wait before downloading the data from the Web
     max_hours_diff = 12
 
+    # Width of HPDI (highest posterior density interval) that is used
+    # to plot the shaded region around the predicted mean line.
+    hpdi_width: float = 0.95
+
     # Fraction of people who have cofonavarus and who have been reported
     # as confirmed case. For example,
     # 1 means all, 0.5 means 50% of sick people get reported)
     fraction_cofirmed = 1
-
-    # Width of HPDI (highest posterior density interval) that is used
-    # to plot the shaded region around the predicted mean line.
-    hpdi_width: float = 0.95
 
     population_size: float = 7_800_000
 
