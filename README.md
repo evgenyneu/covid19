@@ -4,7 +4,7 @@ This is a Stan model for analysing time series of confirmed cases of Coronavirus
 
 ![Modelling COVID-19 confirmed cases with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_observed.png)
 
-![Modelling COVID-19 confirmed cases with logistic function, extrapolated](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_extrapolated)
+![Modelling COVID-19 confirmed cases with logistic function, extrapolated](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_extrapolated.png)
 
 
 ## Setup
