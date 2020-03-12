@@ -73,7 +73,7 @@ python run_mode.py
 
 ## Data source
 
-The data is taken from [https://github.com/CSSEGISandData/COVID-19](
+The data is taken from Johns Hopkins University [Github's repository](
 https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv).
 
 
