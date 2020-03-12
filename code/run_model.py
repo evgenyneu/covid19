@@ -53,6 +53,10 @@ time_series_19-covid-Confirmed.csv"
     # 1 means all, 0.5 means 50% of sick people get reported)
     fraction_cofirmed = 1
 
+    # Width of HPDI (highest posterior density interval) that is used
+    # to plot the shaded region around the predicted mean line.
+    hpdi_width: float = 0.95
+
     population_size: float = 7800000
 
     # Difference between the maximum number of confirmed cases
@@ -66,7 +70,7 @@ time_series_19-covid-Confirmed.csv"
 
     mu_line_color: str = "#444444"
     mu_hpdi_color: str = "#44444477"
-    cases_hpdi_color: str = "#ff770066"
+    cases_hpdi_color: str = "#ff770044"
 
     marker: str = "o"
 
@@ -327,7 +331,8 @@ def plot_data_and_model(fit, dates, cases, settings):
     ax.scatter(dates, cases,
                marker=settings.marker,
                color=settings.marker_color,
-               edgecolor=settings.marker_edgecolor)
+               edgecolor=settings.marker_edgecolor,
+               label="Reported")
 
     # Plot posterior
     # ---------
@@ -358,13 +363,13 @@ def plot_data_and_model(fit, dates, cases, settings):
                                count=day_all_infected, dtstart=dates[0]))
 
     x_dates = np.array(x_dates)
-    ax.plot(x_dates, mu_mean, color=settings.mu_line_color)
+    ax.plot(x_dates, mu_mean, color=settings.mu_line_color, label="Model")
 
     # Plot HPDI interval
     # --------
 
     hpdi = np.apply_along_axis(tarpan.shared.stats.hpdi, 1, mu,
-                               probability=0.95)
+                               probability=settings.hpdi_width)
 
     ax.fill_between(x_dates, hpdi[:, 0], hpdi[:, 1],
                     facecolor=settings.mu_hpdi_color)
@@ -379,12 +384,14 @@ def plot_data_and_model(fit, dates, cases, settings):
     simulated_cases = np.array(simulated_cases)
 
     cases_hpdi = np.apply_along_axis(
-        tarpan.shared.stats.hpdi, 1, simulated_cases, probability=0.95)
+        tarpan.shared.stats.hpdi, 1, simulated_cases,
+        probability=settings.hpdi_width)
 
     ax.fill_between(x_dates,
                     cases_hpdi[:, 0], cases_hpdi[:, 1],
                     facecolor=settings.cases_hpdi_color,
-                    linewidth=0)
+                    linewidth=0,
+                    label=f"{round(settings.hpdi_width*100)}% HPDI")
 
     # Format plot
     # ----------
@@ -396,8 +403,8 @@ def plot_data_and_model(fit, dates, cases, settings):
     date_str = datetime.now().strftime('%b %d, %Y')
 
     title = (
-        "Number of confirmed cases of COVID-19 worldwide excluding China\n"
-        f"Data retrived from Johns Hopkins University on {date_str}"
+        "Number of confirmed cases of COVID-19 worldwide, excluding China.\n"
+        f"Data retrived from Johns Hopkins University on {date_str}."
     )
 
     ax.set_title(title)
@@ -410,6 +417,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     ax.get_yaxis().set_major_formatter(
         matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 
+    ax.legend()
     fig.tight_layout()
 
     # Save images
@@ -420,6 +428,8 @@ def plot_data_and_model(fit, dates, cases, settings):
     # Plot predictions into the future
     # ---------
 
+    day_margin = timedelta(days=5)
+    ax.set_xlim([dates[0] - day_margin, x_dates[-1] + day_margin])
     info_path = InfoPath(**settings.info_path.__dict__)
     filename_date = datetime.now().strftime('%Y_%m_%d')
     filename = f"{filename_date}_extrapolated.png"
@@ -431,13 +441,13 @@ def plot_data_and_model(fit, dates, cases, settings):
 
     last_data = cases[n - 1]
     margins = last_data * 0.1
-    day_margin = timedelta(days=1)
+    day_margin = timedelta(days=2)
     ax.set_xlim([dates[0] - day_margin, dates[-1] + day_margin])
     ax.set_ylim([0 - margins, last_data + margins])
     filename = f"{filename_date}_observed.png"
     image_path = os.path.join(settings.plots_dir, filename)
     fig.savefig(image_path, dpi=info_path.dpi)
-    plt.show()
+    # plt.show()
 
 
 def do_work():
@@ -447,10 +457,10 @@ def do_work():
     check_all_days_present(dates)
     settings.data = data_for_stan(cases, settings=settings)
     output_dir = os.path.join(settings.info_path.dir(), "stan_cache")
-    shutil.rmtree(output_dir, ignore_errors=True)
-    os.makedirs(output_dir, exist_ok=True)
-    fit = run_stan(output_dir=output_dir, settings=settings)
-    # fit = run(func=run_stan, settings=settings)
+    # shutil.rmtree(output_dir, ignore_errors=True)
+    # os.makedirs(output_dir, exist_ok=True)
+    # fit = run_stan(output_dir=output_dir, settings=settings)
+    fit = run(func=run_stan, settings=settings)
     plot_data_and_model(fit=fit, dates=dates, cases=cases, settings=settings)
 
 
