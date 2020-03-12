@@ -62,13 +62,13 @@ To run the code, first, download this repository:
 
 ```bash
 git clone https://github.com/evgenyneu/covid19.git
-cd covid19/code
+cd covid19
 ```
 
 Finally, run the Python script:
 
 ```bash
-python run_model.py
+python code/run_model.py
 ```
 
 ## Data source
