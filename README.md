@@ -68,7 +68,7 @@ cd covid19/code
 Finally, run the Python script:
 
 ```bash
-python run_mode.py
+python run_model.py
 ```
 
 ## Data source
