@@ -15,9 +15,20 @@ https://github.com/CSSEGISandData/COVID-19).
 
 As the new data becomes available daily, I will be running this script and adding the new plots to [plots](plots) directory. This way we can see the changes in the data and the model with time.
 
+## Assumptions
+
+In the model we make the following assumption:
+
+* The number of cases can be modelled with logistic function.
+
+* The virus is able to infect the entire population of 7.8 billion people.
+
+* All people who are infected with COVID-19 are reported.
+
+
 ## Exclusion of China
 
-The model does not include the data for China because the the number of confirmed cases have levelled off, as shown below. This could indicate that the virus has invected most people. Alternatively, it could mean that the data are not accurate, or health care system is overwhelmed and is not able to test people.
+The model does not include the data for China because the the number of confirmed cases have levelled off, as shown below. This could indicate that the virus has invected most people. Alternatively, it could mean that the data are not accurate, or health care system is overwhelmed and is not able to test all people who are infected.
 
 ![Modelling COVID-19 confirmed cases in China with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_observed_china.png)
 
