@@ -1,11 +1,23 @@
 # Analysing time series of world wide confirmed cases of Coronavirus (COVID-19) with Stan and Python
 
-This is a Stan model for analysing time series of confirmed cases of Coronavirus (COVID-19). The code creates a plot showing observed data (round blue markers) and the model (black line):
+This is a Stan model for analysing time series of confirmed cases of Coronavirus (COVID-19). The program does the following:
+
+* Downloads new data on confirmed COVID-19 cases from Johns Hopkins University [Github's repository](
+https://github.com/CSSEGISandData/COVID-19).
+
+* Runs Stan with using logistic function in the model.
+
+* Creates a plot showing observed data with round blue markers and the model with black line:
 
 ![Modelling COVID-19 confirmed cases with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_observed.png)
 
 ![Modelling COVID-19 confirmed cases with logistic function, extrapolated](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_extrapolated.png)
 
+As the new data becomes available daily, I will be running this script and adding the new plots to [plots](plots) directory. This way we can see the changes in the data and the model with time.
+
+## Exclusion of China
+
+The model does not include the data for China.
 
 ## Setup
 
