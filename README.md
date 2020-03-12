@@ -17,7 +17,7 @@ As the new data becomes available daily, I will be running this script and addin
 
 ## Assumptions
 
-In the model we make the following assumption:
+In the model we make the following assumptions:
 
 * The number of cases can be modelled with logistic function.
 
