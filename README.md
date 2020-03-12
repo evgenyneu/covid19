@@ -36,7 +36,7 @@ The model does not include the data for China because the the number of confirme
 
 ## Setup
 
-Download and install all required software with the following steps.
+In order to run the model, download and install all required software with the following steps.
 
 
 ### 1. Install python libraries
