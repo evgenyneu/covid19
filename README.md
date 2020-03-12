@@ -9,11 +9,11 @@ https://github.com/CSSEGISandData/COVID-19).
 
 * Creates a plot showing observed data with round blue markers and the model with black line. The orange shaded region indicates model's uncertainty and corresponds to 95% DHPI (highest posterior density interval).
 
+As the new data becomes available daily, I will be running this script and adding the new plots to [plots](plots) directory. This way we can see the changes in the data and the model with time.
+
 ![Modelling COVID-19 confirmed cases with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/recent_observed.png)
 
 ![Modelling COVID-19 confirmed cases with logistic function, extrapolated](https://github.com/evgenyneu/covid19/raw/master/plots/recent_extrapolated.png)
-
-As the new data becomes available daily, I will be running this script and adding the new plots to [plots](plots) directory. This way we can see the changes in the data and the model with time.
 
 ## Assumptions
 
