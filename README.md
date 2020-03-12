@@ -38,7 +38,7 @@ In the model we make the following assumptions:
 
 The model does not include the data for China because the the number of confirmed cases have levelled off, as shown below. This could indicate that the virus has invected most people. Alternatively, it could mean that the data are not accurate, and/or that the health care system is overwhelmed and is not able to test all people who are infected.
 
-![Modelling COVID-19 confirmed cases in China with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_observed_china.png)
+![Modelling COVID-19 confirmed cases in China with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_13_observed_china.png)
 
 
 ## Setup
