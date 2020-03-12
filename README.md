@@ -20,6 +20,10 @@ As new data become available daily, I will be running this script and adding the
 
 ![Modelling COVID-19 confirmed cases with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/recent_observed.png)
 
+### Extrapolating the data
+
+**Attention**, the following plot was made for fun and is complete nonsense because it was bade with unrealistic model assumptions, and because it extrapolates the data far into the future.
+
 ![Modelling COVID-19 confirmed cases with logistic function, extrapolated](https://github.com/evgenyneu/covid19/raw/master/plots/recent_extrapolated.png)
 
 
