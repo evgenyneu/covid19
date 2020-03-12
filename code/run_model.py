@@ -57,7 +57,7 @@ time_series_19-covid-Confirmed.csv"
     # to plot the shaded region around the predicted mean line.
     hpdi_width: float = 0.95
 
-    population_size: float = 7800000
+    population_size: float = 7_800_000
 
     # Difference between the maximum number of confirmed cases
     # and the actual number of confirmed cases at which we consider
