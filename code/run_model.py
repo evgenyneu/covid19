@@ -52,11 +52,7 @@ time_series_19-covid-Confirmed.csv"
     # to plot the shaded region around the predicted mean line.
     hpdi_width: float = 0.95
 
-    # Fraction of people who have cofonavarus and who have been reported
-    # as confirmed case. For example,
-    # 1 means all, 0.5 means 50% of sick people get reported)
-    fraction_cofirmed = 1
-
+    # Maximum number of people that can be infected
     population_size: float = 7_800_000
 
     # Difference between the maximum number of confirmed cases
@@ -195,14 +191,12 @@ def data_for_stan(cases, settings):
         Data that is supplied to Stan model.
     """
 
-    total_confirmed = settings.population_size * settings.fraction_cofirmed
-
-    q = -1 + total_confirmed / cases[0]
+    q = -1 + settings.population_size / cases[0]
 
     return {
         "n": len(cases),
         "cases": cases,
-        "k": total_confirmed,
+        "k": settings.population_size,
         "q": q
     }
 
