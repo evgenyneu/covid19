@@ -45,6 +45,9 @@ time_series_19-covid-Confirmed.csv"
     # Stan's sampling parameter
     max_treedepth: float = 10
 
+    # Number of hours to wait before downloading the data from the Web
+    max_hours_diff = 12
+
     # Fraction of people who have cofonavarus and who have been reported
     # as confirmed case. For example,
     # 1 means all, 0.5 means 50% of sick people get reported)
@@ -84,13 +87,14 @@ def download_data(settings):
     mod_time = datetime.fromtimestamp(os.path.getmtime(data_path))
     delta = time_now - mod_time
     delta_hours = delta.total_seconds() / 60 / 60
-    max_hours_diff = 12
 
-    if delta_hours < max_hours_diff:
+    if delta_hours < settings.max_hours_diff:
         # Data is up to date
         return
 
-    shutil.rmtree(settings.info_path.dir())  # Remove data directory
+    # Remove data directory
+    shutil.rmtree(settings.info_path.dir(), ignore_errors=True)
+
     print(f"Data last downloaded {round(delta_hours)} hours ago.")
     print(f"Re-downloading data from:\n{data_url}")
 
@@ -150,6 +154,7 @@ def load_data(settings):
 
     df = pd.read_csv(data_path)
     df = df[df['Country/Region'] != 'Mainland China']
+    df = df[df['Country/Region'] != 'China']
     column_names = list(df)
     i_first_day = column_names.index('1/22/20')  # First date column
 
@@ -424,7 +429,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     # Plot at scale of observations
     # ---------
 
-    last_data = simulated_cases.mean(axis=1)[n - 1]
+    last_data = cases[n - 1]
     margins = last_data * 0.1
     day_margin = timedelta(days=1)
     ax.set_xlim([dates[0] - day_margin, dates[-1] + day_margin])
@@ -432,6 +437,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     filename = f"{filename_date}_observed.png"
     image_path = os.path.join(settings.plots_dir, filename)
     fig.savefig(image_path, dpi=info_path.dpi)
+    plt.show()
 
 
 def do_work():
@@ -441,6 +447,8 @@ def do_work():
     check_all_days_present(dates)
     settings.data = data_for_stan(cases, settings=settings)
     output_dir = os.path.join(settings.info_path.dir(), "stan_cache")
+    shutil.rmtree(output_dir, ignore_errors=True)
+    os.makedirs(output_dir, exist_ok=True)
     fit = run_stan(output_dir=output_dir, settings=settings)
     # fit = run(func=run_stan, settings=settings)
     plot_data_and_model(fit=fit, dates=dates, cases=cases, settings=settings)
