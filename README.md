@@ -3,6 +3,43 @@
 This is a Stan model for analysing time series of confirmed cases of Coronavirus (COVID-19).
 
 
+## Setup
+
+Download and install all required software with the following steps.
+
+
+### 1. Install python libraries
+
+First, install Python 3.7 or newer, and then run:
+
+```
+pip install tarpan
+```
+
+If you are having issues with running the code, use `pip install -Iv tarpan==0.3.8` instead.
+
+
+### 2. Install Stan
+
+```
+install_cmdstan
+```
+
+## Usage
+
+To run the code, first, download this repository:
+
+```bash
+git clone https://github.com/evgenyneu/covid19.git
+cd covid19/code
+```
+
+Finally, run the Python script:
+
+```bash
+python run_mode.py
+```
+
 ## Data source
 
 The data is taken from [https://github.com/CSSEGISandData/COVID-19](
