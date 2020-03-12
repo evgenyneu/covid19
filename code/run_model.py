@@ -150,7 +150,7 @@ def load_data(settings):
     list of datetime:
         Days corresponding to the confirmed cases
     list of float:
-        Number of people infected (confirmed).
+        Cumulative number of people infected (confirmed).
     """
 
     data_path = settings.csv_path
@@ -186,7 +186,7 @@ def data_for_stan(cases, settings):
     ----------
 
     list of float:
-        Number of people infected (confirmed).
+        Cumulative number of people infected (confirmed).
 
     Returns
     -------
@@ -276,7 +276,7 @@ def model_function(x, k, q, b):
     Returns
     -------
     numpy.ndarray:
-        Number of infected people
+        Cumulative number of infected people
     """
 
     return float(k) / (1 + q * np.exp(-(b * x)))
@@ -414,7 +414,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     )
 
     ax.set_title(title)
-    ax.set_ylabel("Number of infected people")
+    ax.set_ylabel("Number of confirmed cases")
 
     ax.grid(color=settings.grid_color, linewidth=1,
             alpha=settings.grid_alpha)
