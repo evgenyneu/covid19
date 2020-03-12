@@ -157,8 +157,11 @@ def load_data(settings):
     download_data(settings=settings)
 
     df = pd.read_csv(data_path)
+
+    # Exclude China because its data do not show exponential growth
     df = df[df['Country/Region'] != 'Mainland China']
     df = df[df['Country/Region'] != 'China']
+
     column_names = list(df)
     i_first_day = column_names.index('1/22/20')  # First date column
 
