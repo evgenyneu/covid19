@@ -3,7 +3,7 @@
 This is a Stan model for analysing time series of confirmed cases of Coronavirus (COVID-19).
 
 ### ⚠️⚠️⚠️WARNING ⚠️⚠️⚠️
-This is a simple model that was done for educational purposes only. It almost certainly **very inaccurate** and can not be used to predict the spread of the disease.
+This is a simple model that was done for educational purposes only. It is almost certainly **very inaccurate** and can not be used to predict the spread of the disease.
 
 ## How the model works
 
