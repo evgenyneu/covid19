@@ -17,7 +17,7 @@ As the new data becomes available daily, I will be running this script and addin
 
 ## Exclusion of China
 
-The model does not include the data for China because the the number of confirmed cases have levelled off, as shown below. This could indicate that the virus has invected most people. Alternatively, it could be the case that the data are not accurate, or health care system is overwhelmed and is not able to test people.
+The model does not include the data for China because the the number of confirmed cases have levelled off, as shown below. This could indicate that the virus has invected most people. Alternatively, it could mean that the data are not accurate, or health care system is overwhelmed and is not able to test people.
 
 ![Modelling COVID-19 confirmed cases in China with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_12_observed_china.png)
 
