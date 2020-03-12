@@ -409,8 +409,8 @@ def plot_data_and_model(fit, dates, cases, settings):
     date_str = datetime.now().strftime('%b %d, %Y')
 
     title = (
-        "Number of confirmed cases of COVID-19 worldwide, excluding China.\n"
-        f"Data retrived from Johns Hopkins University on {date_str}."
+        "Total confirmed cases of COVID-19 worldwide, excluding China.\n"
+        f"Data retrieved from Johns Hopkins University on {date_str}."
     )
 
     ax.set_title(title)
