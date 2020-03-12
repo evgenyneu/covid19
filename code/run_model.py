@@ -10,6 +10,7 @@ import seaborn as sns
 from pandas.plotting import register_matplotlib_converters
 from datetime import datetime, timedelta
 from dateutil import rrule
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from cmdstanpy import CmdStanModel
@@ -36,11 +37,13 @@ time_series_19-covid-Confirmed.csv"
     # Path to the .stan model file
     stan_model_path: str = "code/stan_model/logistic.stan"
 
-    # Stan's sampling parameter
-    max_treedepth: float = 10
-
     # Location of plots and summaries
     info_path: InfoPath = InfoPath()
+
+    plots_dir: str = "plots"
+
+    # Stan's sampling parameter
+    max_treedepth: float = 10
 
     # Fraction of people who have cofonavarus and who have been reported
     # as confirmed case. For example,
@@ -385,25 +388,38 @@ def plot_data_and_model(fit, dates, cases, settings):
     date_format = mdates.DateFormatter('%b %d')
     ax.xaxis.set_major_formatter(date_format)
 
+    date_str = datetime.now().strftime('%b %d, %Y')
+
     title = (
-        "Number of people infected with COVID-19 worldwide\n"
-        "Data from Johns Hopkins University, Mar 10, 2010"
+        "Number of confirmed cases of COVID-19 worldwide excluding China\n"
+        f"Data retrived from Johns Hopkins University on {date_str}"
     )
 
     ax.set_title(title)
-    ax.set_ylabel("Infected people (confirmed cases)")
+    ax.set_ylabel("Number of infected people")
 
     ax.grid(color=settings.grid_color, linewidth=1,
             alpha=settings.grid_alpha)
 
+    # Set thousand separator
+    ax.get_yaxis().set_major_formatter(
+        matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
+
     fig.tight_layout()
 
-    # Plot entire population
+    # Save images
+    # ------
+
+    os.makedirs(settings.plots_dir, exist_ok=True)
+
+    # Plot predictions into the future
     # ---------
+
     info_path = InfoPath(**settings.info_path.__dict__)
-    info_path.base_name = "covid19_infected_population"
-    info_path.extension = "png"
-    fig.savefig(str(info_path), dpi=info_path.dpi)
+    filename_date = datetime.now().strftime('%Y_%m_%d')
+    filename = f"{filename_date}_extrapolated.png"
+    image_path = os.path.join(settings.plots_dir, filename)
+    fig.savefig(image_path, dpi=info_path.dpi)
 
     # Plot at scale of observations
     # ---------
@@ -413,9 +429,9 @@ def plot_data_and_model(fit, dates, cases, settings):
     day_margin = timedelta(days=1)
     ax.set_xlim([dates[0] - day_margin, dates[-1] + day_margin])
     ax.set_ylim([0 - margins, last_data + margins])
-    info_path.base_name = "covid19_infected"
-    info_path.extension = "png"
-    fig.savefig(str(info_path), dpi=info_path.dpi)
+    filename = f"{filename_date}_observed.png"
+    image_path = os.path.join(settings.plots_dir, filename)
+    fig.savefig(image_path, dpi=info_path.dpi)
 
 
 def do_work():
@@ -424,9 +440,9 @@ def do_work():
     dates, cases = load_data(settings=settings)
     check_all_days_present(dates)
     settings.data = data_for_stan(cases, settings=settings)
-    # output_dir = os.path.join(settings.info_path.dir(), "stan_cache")
-    # fit = run_stan(output_dir=output_dir, settings=settings)
-    fit = run(func=run_stan, settings=settings)
+    output_dir = os.path.join(settings.info_path.dir(), "stan_cache")
+    fit = run_stan(output_dir=output_dir, settings=settings)
+    # fit = run(func=run_stan, settings=settings)
     plot_data_and_model(fit=fit, dates=dates, cases=cases, settings=settings)
 
 
