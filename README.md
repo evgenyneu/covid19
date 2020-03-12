@@ -36,7 +36,7 @@ In the model we make the following assumptions:
 
 ## Exclusion of China
 
-The model does not include the data for China because the the number of confirmed cases have levelled off, as shown below. Assuming that the data are correct, this  could indicate that the spread of the disease is under control. Well done, China!
+The model does not include the data for China because the number of confirmed cases have levelled off, as shown below. Assuming that the data are correct, this  could indicate that the spread of the disease is under control. Well done, China!
 
 ![Modelling COVID-19 confirmed cases in China with logistic function, observed cases](https://github.com/evgenyneu/covid19/raw/master/plots/2020_03_13_observed_china.png)
 
