@@ -1,6 +1,8 @@
 # Using logistic function to model number of COVID-19 confirmed cases in Stan and Python
 
-This is a Stan model for analysing time series of confirmed cases of Coronavirus (COVID-19). The program does the following:
+This is a Stan model for analysing time series of confirmed cases of Coronavirus (COVID-19). This is a simple model that was done for educational purposes only. It almost certainly very inaccurate and can not be used to predict the spread of the disease.
+
+The program does the following:
 
 * Downloads new data on confirmed COVID-19 cases from Johns Hopkins University [Github's repository](
 https://github.com/CSSEGISandData/COVID-19).
