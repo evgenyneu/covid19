@@ -82,7 +82,7 @@ The script will run the model and save plots into the [plots](plots) directory.
 
 ## Data source
 
-The data is taken from Johns Hopkins University [Github's repository](
+The data are taken from Johns Hopkins University [Github's repository](
 https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv).
 
 
