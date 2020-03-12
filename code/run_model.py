@@ -432,6 +432,12 @@ def plot_data_and_model(fit, dates, cases, settings):
     filename = f"{filename_date}_extrapolated.png"
     image_path = os.path.join(settings.plots_dir, filename)
     fig.savefig(image_path, dpi=info_path.dpi)
+    print("Created plots:")
+    print(image_path)
+
+    filename = f"recent_extrapolated.png"
+    image_path = os.path.join(settings.plots_dir, filename)
+    fig.savefig(image_path, dpi=info_path.dpi)
 
     # Plot at scale of observations
     # ---------
@@ -442,6 +448,11 @@ def plot_data_and_model(fit, dates, cases, settings):
     ax.set_xlim([dates[0] - day_margin, dates[-1] + day_margin])
     ax.set_ylim([0 - margins, last_data + margins])
     filename = f"{filename_date}_observed.png"
+    image_path = os.path.join(settings.plots_dir, filename)
+    fig.savefig(image_path, dpi=info_path.dpi)
+    print(image_path)
+
+    filename = f"recent_observed.png"
     image_path = os.path.join(settings.plots_dir, filename)
     fig.savefig(image_path, dpi=info_path.dpi)
     # plt.show()
