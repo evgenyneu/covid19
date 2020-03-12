@@ -71,6 +71,8 @@ Finally, run the Python script:
 python code/run_model.py
 ```
 
+The script will run the model and save plots into the [plots](plots) directory.
+
 ## Data source
 
 The data is taken from Johns Hopkins University [Github's repository](
