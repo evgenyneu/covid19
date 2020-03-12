@@ -22,7 +22,7 @@ As new data become available daily, I will be running this script and adding the
 
 ### Extrapolating the data
 
-**Attention**, the following plot was made for fun and is complete nonsense because it was bade with unrealistic model assumptions, and because it extrapolates the data far into the future.
+**Attention**, the following plot was made for fun and is complete nonsense because it was bade with unrealistic model assumptions. The plot also extrapolates the data far into the future, which is silly.
 
 ![Modelling COVID-19 confirmed cases with logistic function, extrapolated](https://github.com/evgenyneu/covid19/raw/master/plots/recent_extrapolated.png)
 
