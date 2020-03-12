@@ -414,7 +414,7 @@ def plot_data_and_model(fit, dates, cases, settings):
     )
 
     ax.set_title(title)
-    ax.set_ylabel("Number of confirmed cases")
+    ax.set_ylabel("Total confirmed cases")
 
     ax.grid(color=settings.grid_color, linewidth=1,
             alpha=settings.grid_alpha)
