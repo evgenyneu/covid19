@@ -3,7 +3,7 @@ data {
   real cases[n];   // Number of infected people at successive days
   real k;          // Maximum number cases that can be confirmed
 
-  // Logistic function parameter related to initial number of infected people
+  // Logistic function parameter related to initial number of cases
   real q;
 }
 
