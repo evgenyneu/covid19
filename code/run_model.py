@@ -34,7 +34,7 @@ class AnalysisSettings:
     # URL to the data
     data_url: str = "https://raw.githubusercontent.com/CSSEGISandData/\
 COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/\
-time_series_19-covid-Confirmed.csv"
+time_series_covid19_confirmed_global.csv"
 
     # Path to the .stan model file
     stan_model_path: str = "code/stan_model/logistic.stan"
