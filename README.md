@@ -58,7 +58,7 @@ First, install Python 3.7 or newer, and then run:
 pip install tarpan
 ```
 
-If you are having issues with running the code, use `pip install -Iv tarpan==0.3.8` instead.
+If you are having issues with running the code, use `pip install -Iv tarpan==0.3.9` instead.
 
 
 ### 2. Install Stan

@@ -228,7 +228,7 @@ def run_stan(output_dir, settings: AnalysisSettings):
     fit = model.sample(
         data=settings.data, seed=333,
         adapt_delta=0.99, max_treedepth=settings.max_treedepth,
-        sampling_iters=4000, warmup_iters=1000,
+        iter_sampling=4000, iter_warmup=1000,
         chains=4, cores=4,
         show_progress=True,
         output_dir=output_dir)
