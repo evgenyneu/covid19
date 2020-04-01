@@ -55,7 +55,7 @@ time_series_covid19_confirmed_global.csv"
     hpdi_width: float = 0.95
 
     # Maximum number of people that can be infected
-    population_size: float = 8_000_000
+    population_size: float = 2_000_000
 
     # Difference between the maximum number of confirmed cases
     # and the actual number of confirmed cases at which we consider

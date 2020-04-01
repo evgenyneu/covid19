@@ -33,7 +33,7 @@ In the model we make the following assumptions:
 
 * The number of cases can be modelled with logistic function.
 
-* The virus is able to infect 8 million people in total. However, it will be very interesting to make it a free parameter and let Stan estimate its distribution instead.
+* The virus is able to infect fixed number of people in total. However, it will be very interesting to make it a free parameter and let Stan estimate its distribution instead.
 
 * All people who are infected with COVID-19 are reported.
 
